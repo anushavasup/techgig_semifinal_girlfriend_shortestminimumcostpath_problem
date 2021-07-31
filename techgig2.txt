@@ -1,0 +1,39 @@
+from collections import defaultdict
+from heapq import *
+N,R=map(int,input().split())
+routes=[]
+i=0
+while i<R:
+  routes.append(list(map(int,input().split())))
+  i=i+1
+for u in routes:
+    u.sort()
+routes=sorted(routes)
+
+def main(edges, start_node,end_node):
+    g = defaultdict(list)
+    for l,r,c in edges:
+       g[l].append((c, r))
+       g[r].append((c, l))
+
+    q, seen, mins = [(0,start_node)], set(), {start_node: 0}
+    while q:
+        (cost,v1) = heappop(q)
+        if v1 not in seen:
+            seen.add(v1)
+            
+            if v1 == end_node: return (cost)
+
+            for c, v2 in g.get(v1, ()):
+                if v2 not in seen: 
+                prev = mins.get(v2, None)
+                if c-cost>0:
+                 next = c
+                else:
+                  next=cost
+                if prev is None or next < prev:
+                    mins[v2] = next
+                    heappush(q, (next, v2))
+
+    return str("NOT POSSIBLE")
+print(main(routes, 1, N))
